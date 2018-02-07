@@ -1,6 +1,8 @@
-﻿using System;
+﻿using ConsoleCalc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,63 +12,63 @@ namespace ConsoleCalc
     {
         static void Main(string[] args)
         {
+
+            var calc = new Calc();
+            var operations = calc.GetOperNames();
+            string oper, str;
+            string[] param = null;
+
             Console.WriteLine("Калькулятор");
-
-            Calc calc = new Calc();
-            string oper;
-            double a, b=0, res;
-
+            
             if (args.Length == 0)
             {
+                Console.WriteLine("Список возможных функций:");
+                foreach (var item in operations)
+                {
+                    Console.WriteLine(item);
+                }
+
                 Console.WriteLine("Введите название функции:");
                 oper = Console.ReadLine();
-                Console.WriteLine("Введите аргумент 1:");
-                a = Convert.ToDouble(Console.ReadLine());
-                if (oper != "sqrt")
-                {
-                    Console.WriteLine("Введите аргумент 2:");
-                    b = Convert.ToDouble(Console.ReadLine());
-                }
+
+                Console.WriteLine("Введите аргументы строкой через запятую:");
+                str = Console.ReadLine();
+
+                param = str.Split(',');
             }
+
             else
             {
                 oper = args[0];
-                a = Convert.ToDouble(args[1]);
-                b = Convert.ToDouble(args[2]);
+                param = args[1].Split(',');
             }
-            
-                    
-            if(oper == "sqrt")
+
+            Calculation(oper, param);
+            Console.ReadKey();
+        }
+
+        static void Calculation(string oper, string[] args)
+        {
+            Calc calc = new Calc();
+
+            double[] args1 = new double[args.Length];
+
+            for (int i = 0; i < args.Length; i++)
             {
-                res = calc.sqrt(a);
-                Console.WriteLine($"Sqrt({a})= {res}");
+                args1[i] = Convert.ToDouble(args[i]);
             }
-            else if (oper == "sum")
+
+            var res = calc.Exec(oper, args1);
+
+            if (oper == "sqrt")
             {
-                res = calc.sum(a, b);
-                Console.WriteLine($"Sum({a}, {b})= {res}");
-            }
-            else if (oper == "sub")
-            {
-                res = calc.sub(a, b);
-                Console.WriteLine($"Sub({a}, {b})= {res}");
-            }
-            else if (oper == "mul")
-            {
-                res = calc.mul(a, b);
-                Console.WriteLine($"Mul({a}, {b})= {res}");
-            }
-            else if (oper == "div")
-            {
-                res = calc.div(a, b);
-                Console.WriteLine($"Div({a}, {b})= {res}");
+                Console.WriteLine($"{oper}({args[0]})={res}");
             }
             else
             {
-                Console.WriteLine("null");
+                Console.WriteLine($"{oper}({String.Join(",", args)})={res}");
             }
 
-            Console.ReadKey();
         }
     }
 }
